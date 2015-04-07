@@ -29,8 +29,14 @@ int main(int argc, char *argv[]) {
 				lseek(fd, count_zero, SEEK_CUR);
 				count_zero=0;
         	}
-        	count_sim++;
-        	buffer[count_sim]=buf;
+            if (count_sim<1024) {
+        	   count_sim++;
+        	   buffer[count_sim]=buf;
+            }    else {
+                printf("Write %d\n", count_sim);
+                if (write(fd, buffer, count_sim+1)==-1) {printf("Can't write: %s %d %s\n", strerror(errno), count_sim, buffer);};
+                count_sim=-1;
+            }
         }
     }
 
@@ -38,6 +44,10 @@ int main(int argc, char *argv[]) {
     	printf("Write %d\n",count_sim);
     	if (write(fd, buffer, count_sim+1)==-1) {printf("Can't write: %s %d %s\n", strerror(errno), count_sim, buffer);};
 		}
+        if (count_zero!=0) {
+            printf("Seek %d\n",count_zero);
+           if (lseek(fd, count_zero, SEEK_END) ==-1) {printf("error %s\n", strerror(errno));}
+        }
     int er = close(fd);
     if (er == -1) {
     	printf("Can`t close file: %s\n", strerror(errno));
