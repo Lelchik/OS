@@ -14,7 +14,7 @@
 #define BOARD_HEIGHT  24
 volatile sig_atomic_t keep_going = 1;
 int board[BOARD_WIDTH][BOARD_HEIGHT];
-
+int done = 1;
 
 void initialize_board () {
   int i, j;
@@ -56,6 +56,7 @@ void play() {
     for (j=0; j<BOARD_HEIGHT; j++) {
     board[i][j] = newboard[i][j];
   }
+  done=1;
 }
 
 void print () {
@@ -83,11 +84,14 @@ void read_file (char *name) {
   }
   fclose (f);
 }
+
 void catch_alarm (int sig){
+  if (done) {
+    done=0;
     alarm(1);
     print ();
     play();
-    signal (sig, catch_alarm); 
+    signal (sig, catch_alarm); } else { printf("Error!\n");}
 }
 
 
